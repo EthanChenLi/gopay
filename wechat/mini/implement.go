@@ -1,21 +1,23 @@
 package mini
 
-import "gopay/src/wechat"
+import (
+	"gopay/lib/config"
+	"gopay/wechat/collect"
+)
 
 //小程序支付方法集合
-
 const tradeType = "JSAPI" //小程序取值如下：JSAPI
 
-//NewWechatMini 小程序支付
+// Implement  小程序支付
 type Implement struct {
-	BaseConfig wechat.BaseConfig
-	Params wechat.IParams
-	Exp map[string]interface{}
+	BaseConfig config.WechatCoreConfig
+	Params     collect.IParams
+	Exp        map[string]interface{}
 }
 
-func NewImplement(baseConfig *wechat.BaseConfig) *Implement {
+func NewImplement(baseConfig config.WechatCoreConfig) *Implement {
 	return &Implement{
-		BaseConfig: *baseConfig,
+		BaseConfig: baseConfig,
 	}
 }
 
@@ -25,9 +27,14 @@ func NewImplement(baseConfig *wechat.BaseConfig) *Implement {
 //	Body <string> 商品简单描述，该字段请按照规范传递
 //	TotalFee <int> 订单总金额，单位为分
 // exp 补充参数
-func (mini *Implement)Unifiedorder(params wechat.IParams, exp map[string]interface{}) {
+func (mini *Implement)Unifiedorder(params collect.IParams, exp map[string]interface{}) error {
 	mini.Params = params
 	mini.Exp = exp
-	mini.unifiedorderService()
-}
+	err := mini.unifiedorderService()
+	if err !=nil {
+		return err
+	}
 
+
+	return nil
+}
