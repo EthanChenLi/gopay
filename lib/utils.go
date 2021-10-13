@@ -2,11 +2,12 @@ package lib
 
 import (
 	"bytes"
+	"crypto/hmac"
 	"crypto/md5"
-	"encoding/xml"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"github.com/gogf/gf/container/gmap"
-	"gopay/wechat/collect"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
@@ -68,10 +69,17 @@ func GetClientIp () string {
 }
 
 func Md5(str string) string {
-	data := []byte(str)
-	has := md5.Sum(data)
-	return fmt.Sprintf("%x", has) //将[]byte转成16进制
+	h := md5.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
 }
+
+func Hmac256(str , apiKey string) string {
+	h := hmac.New(sha256.New, []byte(apiKey))
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
 
 //签名创建
 //https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
@@ -96,10 +104,16 @@ func WechatSignCreated(params *gmap.StrAnyMap, key string) string {
 	uriStr := strings.Join(uri,"&")
 	//追加上key
 	uriStr += fmt.Sprintf("&key=%s", key)
-	return strings.ToUpper(Md5(uriStr))
+	var encryptionString string
+	if params.Get("sign_type") == "MD5" {
+		encryptionString = Md5(uriStr)
+	} else {
+		encryptionString = Hmac256(uriStr, key)
+	}
+	return strings.ToUpper(encryptionString)
 }
 
-func HttpPost(url string, xmlString string) (*collect.WechatResponse,error){
+func HttpPost(url string, xmlString string) ([]byte, error){
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(xmlString)))
 	if err != nil {
 		return nil, err
@@ -111,12 +125,7 @@ func HttpPost(url string, xmlString string) (*collect.WechatResponse,error){
 	if err != nil {
 		return nil, err
 	}
-	body, _ := ioutil.ReadAll(resp.Body)
-	var resDate collect.WechatResponse
-	if err := xml.Unmarshal(body, &resDate); err !=nil {
-		return nil, err
-	}
-	return &resDate, nil
+	return ioutil.ReadAll(resp.Body)
 }
 
 //map转xml
@@ -128,4 +137,13 @@ func Map2Xml(params map[string]interface{}) string {
 	}
 	strBuf.WriteString("</xml>")
 	return strBuf.String()
+}
+
+//三目运算符
+func If(b bool, t, f interface{}) interface{} {
+	if b {
+		return t
+	}else{
+		return f
+	}
 }

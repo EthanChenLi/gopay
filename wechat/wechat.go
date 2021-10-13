@@ -9,9 +9,6 @@ import (
 const SignTypeMd5 = "MD5" //签名类型 md5
 const SignTypeSha256 = "HMAC-SHA256" //签名类型SHA256
 
-
-
-
 // Client 微信基础配置
 type Client struct {
 	CoreConfig config.WechatCoreConfig
