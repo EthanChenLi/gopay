@@ -15,7 +15,6 @@ type Implement struct {
 	Exp        map[string]interface{}
 }
 
-
 func NewImplement(baseConfig config.WechatCoreConfig) *Implement {
 	return &Implement{
 		BaseConfig: baseConfig,
@@ -29,26 +28,26 @@ func NewImplement(baseConfig config.WechatCoreConfig) *Implement {
 //	TotalFee <int> 订单总金额，单位为分
 // Openid <string> openid
 // exp 补充参数
-func (mini *Implement)UnifiedOrder(params collect.IParams, exp map[string]interface{}) (*collect.ResponseWithMiniOfUnifiedOrder, error) {
+func (mini *Implement) UnifiedOrder(params collect.IParams, exp map[string]interface{}) (*collect.ResponseWithMiniOfUnifiedOrder, error) {
 	mini.Params = params
 	mini.Exp = exp
-	param , err := mini.unifiedOrderService()
-	if err !=nil {
-		return nil,err
+	param, err := mini.unifiedOrderService()
+	if err != nil {
+		return nil, err
 	}
 	return param, nil
 }
 
 // OrderQuery 订单查询
 // 该接口提供所有微信支付订单的查询，商户可以通过查询订单接口主动查询订单状态，完成下一步的业务逻辑。
-func (mini *Implement)OrderQuery(params collect.IParams) (*collect.ResponseWithMiniOfOrderQuery, error){
+func (mini *Implement) OrderQuery(params collect.IParams) (*collect.ResponseWithMiniOfOrderQuery, error) {
 	mini.Params = params
 	return mini.orderQueryService()
 }
 
 //CloseOrder 关闭订单
 //out_trade_no 订单编号
-func (mini *Implement)CloseOrder(params collect.IParams) (*collect.ResponseWithMiniOfCloseOrder, error)  {
+func (mini *Implement) CloseOrder(params collect.IParams) (*collect.ResponseWithMiniOfCloseOrder, error) {
 	mini.Params = params
 	return mini.closeOrderService()
 }

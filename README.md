@@ -42,3 +42,11 @@ params, err :=client.Mini().CloseOrder(mini.CloseOrderParams{
 		OutTradeNo: "", //订单号
 	})
 ```
+### 签名校验（可用于所有返回参数校验)
+```go
+    //params 请求返回的结构体
+	// appkey 微信的支付key
+	// md5 设置的加密方式
+	// @return bool 
+	ok := client.VerifySign(params, client.CoreConfig.AppKey, wechat.SignTypeMd5)
+```

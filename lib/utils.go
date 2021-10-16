@@ -54,7 +54,6 @@ func GetRandomNumber(l int) string {
 	return BytesToString(result)
 }
 
-
 // BytesToString 0 拷贝转换 slice byte 为 string
 func BytesToString(b []byte) (s string) {
 	_bptr := (*reflect.SliceHeader)(unsafe.Pointer(&b))
@@ -64,7 +63,7 @@ func BytesToString(b []byte) (s string) {
 	return s
 }
 
-func GetClientIp () string {
+func GetClientIp() string {
 	return "127.0.0.1"
 }
 
@@ -74,12 +73,11 @@ func Md5(str string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func Hmac256(str , apiKey string) string {
+func Hmac256(str, apiKey string) string {
 	h := hmac.New(sha256.New, []byte(apiKey))
 	h.Write([]byte(str))
 	return hex.EncodeToString(h.Sum(nil))
 }
-
 
 //签名创建
 //https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=4_3
@@ -96,12 +94,12 @@ func WechatSignCreated(params *gmap.StrAnyMap, key string) string {
 	keys := params.Keys()
 	sort.Strings(keys)
 	var uri []string
-	for _, item := range keys{
+	for _, item := range keys {
 		if params.Get(item) != "" {
-			uri = append(uri, fmt.Sprintf("%v=%v",item, params.Get(item)))
+			uri = append(uri, fmt.Sprintf("%v=%v", item, params.Get(item)))
 		}
 	}
-	uriStr := strings.Join(uri,"&")
+	uriStr := strings.Join(uri, "&")
 	//追加上key
 	uriStr += fmt.Sprintf("&key=%s", key)
 	var encryptionString string
@@ -113,7 +111,7 @@ func WechatSignCreated(params *gmap.StrAnyMap, key string) string {
 	return strings.ToUpper(encryptionString)
 }
 
-func HttpPost(url string, xmlString string) ([]byte, error){
+func HttpPost(url string, xmlString string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer([]byte(xmlString)))
 	if err != nil {
 		return nil, err
@@ -143,7 +141,7 @@ func Map2Xml(params map[string]interface{}) string {
 func If(b bool, t, f interface{}) interface{} {
 	if b {
 		return t
-	}else{
+	} else {
 		return f
 	}
 }
